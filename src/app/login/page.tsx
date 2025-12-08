@@ -116,6 +116,15 @@ export default function LoginPage() {
                 新規登録
               </Link>
             </p>
+            <p className="mt-2 text-sm text-gray-600">
+              パスワードを変更する方は{' '}
+              <Link
+                href="/change-password"
+                className="text-blue-600 hover:underline"
+              >
+                こちら
+              </Link>
+            </p>
             <Link
               href="/"
               className="mt-4 block text-sm text-gray-600 hover:underline"

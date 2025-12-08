@@ -105,3 +105,41 @@ export async function loginUser(email: string, password: string) {
   }
 }
 
+// パスワード変更
+export async function changePassword(
+  email: string,
+  currentPassword: string,
+  newPassword: string
+) {
+  // ユーザーを検索
+  const user = await prisma.user.findUnique({
+    where: { email },
+  })
+
+  if (!user) {
+    throw new Error('メールアドレスまたはパスワードが正しくありません')
+  }
+
+  // 現在のパスワードを検証
+  const isValid = await verifyPassword(currentPassword, user.password)
+
+  if (!isValid) {
+    throw new Error('現在のパスワードが正しくありません')
+  }
+
+  // 新しいパスワードをハッシュ化
+  const hashedNewPassword = await hashPassword(newPassword)
+
+  // パスワードを更新
+  await prisma.user.update({
+    where: { email },
+    data: { password: hashedNewPassword },
+  })
+
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+  }
+}
+

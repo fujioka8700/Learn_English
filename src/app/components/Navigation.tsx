@@ -47,7 +47,7 @@ export default function Navigation() {
               href="/"
               className="text-xl font-bold text-gray-900 hover:text-blue-600"
             >
-              📚 英語学習アプリ ✨
+              📚 英単語暗記 ✨
             </Link>
           </div>
 
