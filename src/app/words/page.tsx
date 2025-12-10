@@ -1,135 +1,133 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 interface Word {
-  id: number
-  english: string
-  japanese: string
-  level: string
+  id: number;
+  english: string;
+  japanese: string;
+  level: string;
 }
 
 interface Pagination {
-  page: number
-  limit: number
-  total: number
-  totalPages: number
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 export default function WordsPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [words, setWords] = useState<Word[]>([])
-  const [pagination, setPagination] = useState<Pagination | null>(null)
-  const [loading, setLoading] = useState(true)
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [words, setWords] = useState<Word[]>([]);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [loading, setLoading] = useState(true);
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
-    null
-  )
+    null,
+  );
   const [level, setLevel] = useState<string>(
-    searchParams.get('level') || 'all'
-  )
+    searchParams.get('level') || 'all',
+  );
   const [search, setSearch] = useState<string>(
-    searchParams.get('search') || ''
-  )
+    searchParams.get('search') || '',
+  );
   const [sort, setSort] = useState<string>(
-    searchParams.get('sort') || 'english'
-  )
+    searchParams.get('sort') || 'english',
+  );
   const [order, setOrder] = useState<string>(
-    searchParams.get('order') || 'asc'
-  )
+    searchParams.get('order') || 'asc',
+  );
   const [currentPage, setCurrentPage] = useState<number>(
-    parseInt(searchParams.get('page') || '1')
-  )
+    parseInt(searchParams.get('page') || '1'),
+  );
 
   // データ取得
   const fetchWords = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const params = new URLSearchParams()
-      if (level !== 'all') params.set('level', level)
-      if (search) params.set('search', search)
-      params.set('sort', sort)
-      params.set('order', order)
-      params.set('page', currentPage.toString())
+      const params = new URLSearchParams();
+      if (level !== 'all') params.set('level', level);
+      if (search) params.set('search', search);
+      params.set('sort', sort);
+      params.set('order', order);
+      params.set('page', currentPage.toString());
 
-      const response = await fetch(`/api/words?${params.toString()}`)
-      const data = await response.json()
+      const response = await fetch(`/api/words?${params.toString()}`);
+      const data = await response.json();
 
       if (response.ok) {
-        setWords(data.words)
-        setPagination(data.pagination)
+        setWords(data.words);
+        setPagination(data.pagination);
       } else {
-        console.error('Failed to fetch words:', data.error)
+        console.error('Failed to fetch words:', data.error);
       }
     } catch (error) {
-      console.error('Error fetching words:', error)
+      console.error('Error fetching words:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // URLパラメータを更新
   useEffect(() => {
-    const params = new URLSearchParams()
-    if (level !== 'all') params.set('level', level)
-    if (search) params.set('search', search)
-    params.set('sort', sort)
-    params.set('order', order)
-    if (currentPage > 1) params.set('page', currentPage.toString())
+    const params = new URLSearchParams();
+    if (level !== 'all') params.set('level', level);
+    if (search) params.set('search', search);
+    params.set('sort', sort);
+    params.set('order', order);
+    if (currentPage > 1) params.set('page', currentPage.toString());
 
-    router.push(`/words?${params.toString()}`, { scroll: false })
-  }, [level, search, sort, order, currentPage, router])
+    router.push(`/words?${params.toString()}`, { scroll: false });
+  }, [level, search, sort, order, currentPage, router]);
 
   // 検索入力のデバウンス処理
   useEffect(() => {
     if (debounceTimer) {
-      clearTimeout(debounceTimer)
+      clearTimeout(debounceTimer);
     }
 
     const timer = setTimeout(() => {
-      setCurrentPage(1)
-      fetchWords()
-    }, 500) // 500ms待機
+      setCurrentPage(1);
+      fetchWords();
+    }, 500); // 500ms待機
 
-    setDebounceTimer(timer)
+    setDebounceTimer(timer);
 
     return () => {
-      if (timer) clearTimeout(timer)
-    }
+      if (timer) clearTimeout(timer);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search])
+  }, [search]);
 
   // データ取得（検索以外の変更時）
   useEffect(() => {
-    fetchWords()
+    fetchWords();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [level, sort, order, currentPage])
+  }, [level, sort, order, currentPage]);
 
   // 検索ハンドラ
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    setCurrentPage(1)
-    fetchWords()
-  }
+    e.preventDefault();
+    setCurrentPage(1);
+    fetchWords();
+  };
 
   // ソート切り替え
   const handleSort = (newSort: string) => {
     if (sort === newSort) {
-      setOrder(order === 'asc' ? 'desc' : 'asc')
+      setOrder(order === 'asc' ? 'desc' : 'asc');
     } else {
-      setSort(newSort)
-      setOrder('asc')
+      setSort(newSort);
+      setOrder('asc');
     }
-    setCurrentPage(1)
-  }
+    setCurrentPage(1);
+  };
 
   return (
     <div className="min-h-screen py-8">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900">
-          英単語一覧
-        </h1>
+        <h1 className="mb-8 text-3xl font-bold text-gray-900">英単語一覧</h1>
 
         {/* フィルタ・検索エリア */}
         <div className="mb-6 space-y-4 rounded-lg bg-white p-4 shadow">
@@ -147,7 +145,7 @@ export default function WordsPage() {
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                すべて
+                全て
               </button>
               <button
                 onClick={() => setLevel('中1')}
@@ -239,7 +237,10 @@ export default function WordsPage() {
                 <>
                   全 {pagination.total} 件中{' '}
                   {(pagination.page - 1) * pagination.limit + 1} -{' '}
-                  {Math.min(pagination.page * pagination.limit, pagination.total)}{' '}
+                  {Math.min(
+                    pagination.page * pagination.limit,
+                    pagination.total,
+                  )}{' '}
                   件を表示
                 </>
               )}
@@ -282,7 +283,7 @@ export default function WordsPage() {
                     (page) =>
                       page === 1 ||
                       page === pagination.totalPages ||
-                      Math.abs(page - currentPage) <= 2
+                      Math.abs(page - currentPage) <= 2,
                   )
                   .map((page, index, array) => (
                     <div key={page} className="flex items-center gap-2">
@@ -304,7 +305,7 @@ export default function WordsPage() {
                 <button
                   onClick={() =>
                     setCurrentPage(
-                      Math.min(pagination.totalPages, currentPage + 1)
+                      Math.min(pagination.totalPages, currentPage + 1),
                     )
                   }
                   disabled={currentPage === pagination.totalPages}
@@ -318,9 +319,5 @@ export default function WordsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
-
-
-
-

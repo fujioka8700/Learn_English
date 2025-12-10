@@ -82,3 +82,4 @@ $ git checkout -b <新しいブランチ名> <タグ名>
 # ローカルブランチを安全に削除する
 $ git branch -d <branch-name>
 ```
+
