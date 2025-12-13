@@ -619,7 +619,7 @@ function FlashcardContent() {
                           ? 'border-green-400 bg-gradient-to-br from-emerald-50 to-green-50'
                           : 'border-gray-300 bg-gradient-to-br from-blue-50 to-indigo-50'
                       }`}
-                      style={{ width: 'calc(100% - 80px)', height: '280px', maxWidth: 'calc(100% - 80px)', margin: '0 auto' }}
+                      style={{ width: 'calc(100% - 120px)', height: '280px', maxWidth: 'calc(100% - 120px)', margin: '0 auto' }}
                     >
                       <div className="flex h-full items-center justify-center">
                         {flashcardMode === 'en-to-ja' ? (
